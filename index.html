@@ -1,17 +1,394 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>8086 MCQ Practice Exam</title>
-    <meta name="description" content="8086 Microprocessor MCQ Practice Exam - University of Hilla" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
-    <style>
-      body { margin: 0; padding: 0; }
-    </style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>8086 MCQ Practice Exam</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0a0f1c;--card:#111827;--border:#1e293b;
+--accent:#22d3ee;--accent2:#a78bfa;--green:#34d399;
+--red:#f87171;--yellow:#fbbf24;--text:#e2e8f0;
+--dim:#94a3b8;--dark:#64748b;
+}
+@media(prefers-color-scheme:light){
+:root{
+--bg:#f0f4f8;--card:#fff;--border:#e2e8f0;
+--accent:#0891b2;--accent2:#7c3aed;--green:#059669;
+--red:#dc2626;--yellow:#d97706;--text:#1e293b;
+--dim:#64748b;--dark:#94a3b8;
+}
+}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.header{
+background:linear-gradient(135deg,#0f172a,#1e1b4b,#0f172a);
+border-bottom:1px solid var(--border);padding:28px 24px 20px;text-align:center;
+position:relative;overflow:hidden;
+}
+@media(prefers-color-scheme:light){
+.header{background:linear-gradient(135deg,#e0e7ff,#ddd6fe,#e0e7ff)}
+}
+.header h1{
+font-size:1.6rem;font-weight:800;letter-spacing:2px;
+background:linear-gradient(90deg,var(--accent),var(--accent2));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;
+}
+.header p{color:var(--dim);font-size:.82rem;letter-spacing:1px}
+.chip{display:inline-block;width:28px;height:28px;margin-bottom:6px;opacity:.7;color:var(--accent)}
+
+.toolbar{
+display:flex;gap:8px;padding:14px 16px;overflow-x:auto;
+border-bottom:1px solid var(--border);background:var(--card);
+flex-wrap:wrap;justify-content:center;
+}
+.toolbar button{
+padding:7px 16px;border-radius:20px;border:1px solid var(--border);
+background:transparent;color:var(--dim);font-size:.78rem;font-weight:600;
+cursor:pointer;transition:all .2s;white-space:nowrap;font-family:inherit;
+}
+.toolbar button:hover{border-color:var(--accent);color:var(--accent)}
+.toolbar button.active{
+background:linear-gradient(135deg,var(--accent),var(--accent2));
+color:#fff;border-color:transparent;
+}
+
+.mode-bar{
+padding:12px 16px;display:flex;flex-direction:column;gap:10px;
+align-items:center;background:var(--card);border-bottom:1px solid var(--border);
+}
+.mode-switch{
+display:flex;background:var(--bg);border-radius:24px;padding:3px;border:1px solid var(--border);
+}
+.mode-switch button{
+padding:6px 16px;border:none;border-radius:20px;background:transparent;
+color:var(--dim);font-size:.75rem;font-weight:600;cursor:pointer;
+transition:all .2s;font-family:inherit;
+}
+.mode-switch button.active{
+background:var(--card);color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.2);
+}
+
+.stats-bar{
+display:flex;gap:16px;padding:12px 20px;justify-content:center;
+align-items:center;background:var(--card);border-bottom:1px solid var(--border);flex-wrap:wrap;
+}
+.stat{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--dim)}
+.stat .num{font-weight:700;font-size:1rem}
+.pbar{width:120px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.pfill{height:100%;border-radius:3px;transition:width .4s;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+
+.container{max-width:700px;margin:0 auto;padding-bottom:80px}
+
+.q-card{
+margin:12px;padding:20px;background:var(--card);border:1px solid var(--border);
+border-radius:14px;transition:all .25s;animation:fadeIn .3s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.q-card:hover{border-color:rgba(34,211,238,.2)}
+
+.q-num{
+display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:700;
+color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;
+}
+.q-badge{
+background:rgba(167,139,250,.15);color:var(--accent2);padding:2px 8px;
+border-radius:10px;font-size:.65rem;
+}
+.q-result{margin-left:6px;font-size:.8rem}
+.q-text{font-size:.95rem;font-weight:600;line-height:1.6;margin-bottom:14px;color:var(--text)}
+
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{
+display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;
+border:1px solid var(--border);background:transparent;color:var(--text);
+font-size:.85rem;cursor:pointer;transition:all .2s;text-align:left;width:100%;font-family:inherit;
+}
+.opt:hover{border-color:var(--accent);background:rgba(34,211,238,.05)}
+.opt .letter{
+width:26px;height:26px;display:flex;align-items:center;justify-content:center;
+border-radius:50%;background:rgba(148,163,184,.1);font-weight:700;
+font-size:.75rem;color:var(--dim);flex-shrink:0;transition:all .2s;
+}
+.opt.selected{border-color:var(--accent);background:rgba(34,211,238,.08)}
+.opt.selected .letter{background:var(--accent);color:#0a0f1c}
+.opt.correct{border-color:var(--green);background:rgba(52,211,153,.1)}
+.opt.correct .letter{background:var(--green);color:#0a0f1c}
+.opt.correct-hint{border-color:var(--green);background:rgba(52,211,153,.06);border-style:dashed}
+.opt.correct-hint .letter{background:rgba(52,211,153,.3);color:var(--green)}
+.opt.wrong{border-color:var(--red);background:rgba(248,113,113,.1)}
+.opt.wrong .letter{background:var(--red);color:#0a0f1c}
+.opt.disabled{pointer-events:none;opacity:.7}
+
+.explanation{
+margin-top:12px;padding:12px 14px;background:rgba(34,211,238,.06);
+border-radius:10px;border-right:3px solid var(--accent);font-size:.83rem;
+line-height:1.7;color:var(--dim);direction:rtl;text-align:right;
+animation:slideD .3s ease;
+}
+@keyframes slideD{from{opacity:0;max-height:0}to{opacity:1;max-height:200px}}
+.explanation .lbl{color:var(--accent);font-weight:700;font-size:.75rem;margin-bottom:4px;display:block;letter-spacing:1px}
+
+.result-banner{
+margin:16px 12px;padding:24px;
+background:linear-gradient(135deg,rgba(34,211,238,.1),rgba(167,139,250,.1));
+border:1px solid var(--accent);border-radius:16px;text-align:center;
+}
+.big-score{
+font-size:3rem;font-weight:800;
+background:linear-gradient(90deg,var(--accent),var(--accent2));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.pct{font-size:1.1rem;color:var(--dim);margin-top:4px}
+
+.submit-bar{
+position:fixed;bottom:0;left:0;right:0;background:var(--card);
+border-top:1px solid var(--border);padding:12px 16px;
+display:flex;justify-content:center;gap:12px;z-index:100;
+}
+.btn{
+padding:10px 24px;border-radius:24px;border:none;font-weight:700;
+font-size:.85rem;cursor:pointer;transition:all .2s;font-family:inherit;
+}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.btn-primary:hover{transform:scale(1.03);opacity:.9}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+const LETTERS=["A","B","C","D","E"];
+const Q=[
+{id:1,s:"A",q:"The 8086 microprocessor is classified as a:",o:["8-bit processor","16-bit processor","32-bit processor","64-bit processor","4-bit processor"],a:1,e:"8086 معالج 16-بت؛ عرض وحدة المعالجة والسجلات العامة الأساسية فيه 16 بت."},
+{id:2,s:"A",q:"The maximum memory that 8086 can address is:",o:["64 KB","128 KB","256 KB","1 MB","4 GB"],a:3,e:"ناقل العناوين 20 بت، وبالتالي أقصى فضاء عنونة = 2^20 = 1 MB."},
+{id:3,s:"A",q:"The address bus size of the 8086 is:",o:["8-bit","16-bit","18-bit","20-bit","32-bit"],a:3,e:"8086 يملك Address Bus بعرض 20 بت."},
+{id:4,s:"A",q:"The 8086 can support up to how many I/O ports?",o:["256","1K","8K","32K","64K"],a:4,e:"عنونة منافذ الإدخال/الإخراج في 8086 تتم بعرض 16 بت، أي 2^16 = 65536 = 64K منفذاً."},
+{id:5,s:"A",q:"The 8086 operates in which two modes?",o:["User and Kernel","Real and Protected","Minimum and Maximum","Master and Slave","Input and Output"],a:2,e:"للـ 8086 نمطان للتشغيل: Minimum mode و Maximum mode."},
+{id:6,s:"A",q:"The 8086 architecture is divided into:",o:["ALU and Control Unit","BIU and EU","Memory and I/O","Stack and Heap","ROM and RAM"],a:1,e:"البنية تنقسم إلى Bus Interface Unit و Execution Unit."},
+{id:7,s:"A",q:"The instruction queue in 8086 can store up to:",o:["2 bytes","4 bytes","6 bytes","8 bytes","10 bytes"],a:2,e:"طابور الجلب المسبق في 8086 سعته 6 بايت."},
+{id:8,s:"A",q:"The main purpose of the instruction queue is to:",o:["Increase memory size","Store data permanently","Implement pipelining","Reduce power consumption","Store flags"],a:2,e:"الطابور يحقق الجلب المسبق للتعليمات لتحسين الأداء بطريقة شبيهة بالـ pipeline."},
+{id:9,s:"A",q:"The physical address in 8086 is generated by:",o:["ALU","EU","Stack Pointer","BIU","Flag Register"],a:3,e:"الـ BIU هو المسؤول عن تكوين العنوان الفيزيائي والتعامل مع الحافلة."},
+{id:10,s:"A",q:"When a jump instruction is executed, the BIU will:",o:["Halt execution","Reset the instruction queue","Disable interrupts","Clear flags","Stop pipelining permanently"],a:1,e:"عند القفز تتغير سلسلة التنفيذ، لذلك تُفرَّغ/تُعاد تهيئة طابور التعليمات."},
+{id:11,s:"A",q:"Which of the following is known as the Accumulator register?",o:["BX","CX","DX","AX","SP"],a:3,e:"السجل AX هو Accumulator register."},
+{id:12,s:"A",q:"Which register is primarily used as a loop counter?",o:["AX","BX","CX","DX","SI"],a:2,e:"السجل CX يُستخدم عادةً كعدّاد للحلقات."},
+{id:13,s:"A",q:"The Stack Pointer (SP) is associated with which segment register?",o:["CS","DS","ES","SS","IP"],a:3,e:"السجل SP يرتبط بمقطع المكدس Stack Segment أي SS."},
+{id:14,s:"A",q:"In string operations, SI is associated with:",o:["CS","DS","SS","ES","IP"],a:1,e:"في عمليات السلاسل SI يكون عادةً مع DS كمصدر."},
+{id:15,s:"A",q:"The Flag register in 8086 contains how many active flags?",o:["6","7","8","9","16"],a:3,e:"في 8086 توجد 9 أعلام فعّالة مستخدمة فعلياً."},
+{id:16,s:"A",q:"Which flag is set when the result of an operation is zero?",o:["CF","OF","ZF","SF","PF"],a:2,e:"Zero Flag ZF يُضبط عندما تكون نتيجة العملية صفراً."},
+{id:17,s:"A",q:"The Carry Flag (CF) is set when:",o:["Result is negative","Result is zero","There is a carry out of MSB","Parity is even","Overflow occurs only"],a:2,e:"Carry Flag يرتفع عند حدوث حمل من أعلى بت في العمليات الموجبة."},
+{id:18,s:"A",q:"The Direction Flag (DF) controls:",o:["Interrupt handling","Arithmetic overflow","String auto increment/decrement","Parity checking","Stack operations"],a:2,e:"Direction Flag يحدد زيادة/إنقاص SI و DI في تعليمات السلاسل."},
+{id:19,s:"A",q:"Each segment in 8086 has a maximum size of:",o:["16 KB","32 KB","64 KB","128 KB","1 MB"],a:2,e:"حجم كل Segment في 8086 يساوي 64 كيلوبايت كحد أقصى."},
+{id:20,s:"A",q:"The physical address is calculated as:",o:["Segment + Offset","Segment × 10H + Offset","Segment × 16 + Offset","Segment ÷ Offset","Offset × 16"],a:2,e:"العنوان الفيزيائي = Segment × 10H + Offset. (الخيار C مكافئ أيضاً)"},
+{id:21,s:"A",q:"If CS = 2000H and IP = 1000H, the physical address is:",o:["21000H","30000H","210000H","20000H","10000H"],a:0,e:"الحساب: 2000H × 10H = 20000H + 1000H = 21000H."},
+{id:22,s:"A",q:"A word is aligned when its least significant byte is stored at:",o:["Odd address","Even address","Multiple of 3","High bank only","Low bank only"],a:1,e:"تكون الكلمة aligned عندما يبدأ البايت الأقل أهمية عند عنوان زوجي."},
+{id:23,s:"A",q:"A misaligned word in 8086 requires:",o:["1 bus cycle","2 bus cycles","3 bus cycles","4 bus cycles","No bus cycle"],a:1,e:"الكلمة غير المحاذية تحتاج غالباً إلى دورتين على الـ bus."},
+{id:24,s:"A",q:"In 8086 memory banking, the high bank is enabled when:",o:["A0 = 0","BHE = 1","BHE = 0","A1 = 1","CF = 1"],a:2,e:"تفعيل البنك العالي يتم بإشارة BHE = 0 (فعالة بالمستوى المنخفض)."},
+{id:25,s:"A",q:"The program that translates assembly language into machine language is called:",o:["Compiler","Interpreter","Loader","Assembler","Linker"],a:3,e:"الـ Assembler يترجم Assembly إلى Machine Code."},
+{id:26,s:"B",q:"The Intel 8086 microprocessor is classified as a:",o:["8-bit processor","16-bit processor","32-bit processor","64-bit processor","4-bit processor"],a:1,e:"8086 مصنف كمعالج 16-بت."},
+{id:27,s:"B",q:"The 8086 has an address bus width of:",o:["8 bits","16 bits","20 bits","24 bits","32 bits"],a:2,e:"عرض ناقل العناوين هو 20 بت."},
+{id:28,s:"B",q:"The maximum memory that the 8086 can address is:",o:["64 KB","256 KB","512 KB","1 MB","4 MB"],a:3,e:"الذاكرة القصوى القابلة للعنونة هي 1 ميجابايت."},
+{id:29,s:"B",q:"The number of I/O ports supported by the 8086 is:",o:["8K","16K","32K","64K","128K"],a:3,e:"عدد منافذ I/O الممكنة هو 64K."},
+{id:30,s:"B",q:"The multiplexed bus in 8086 includes:",o:["A0-A7","AD0-AD15","D0-D7","A8-A15","BHE-ALE"],a:1,e:"الخطوط AD0-AD15 هي خطوط متعددة الإرسال للعنوان/البيانات."},
+{id:31,s:"B",q:"The 8086 operates in how many modes?",o:["One","Two","Three","Four","Five"],a:1,e:"للـ 8086 نمطان: Minimum و Maximum."},
+{id:32,s:"B",q:"Minimum mode in 8086 is used for:",o:["Multiprocessor systems","Single processor systems","Network systems","Embedded systems","Parallel processors"],a:1,e:"Minimum mode مخصص للأنظمة أحادية المعالج."},
+{id:33,s:"B",q:"Maximum mode in 8086 is used for:",o:["Single microprocessor systems","Multiprocessor systems","Portable devices","Robotics","Gaming systems"],a:1,e:"Maximum mode يُستخدم مع الأنظمة متعددة المعالجات."},
+{id:34,s:"B",q:"The instruction queue in 8086 can prefetch up to:",o:["2 bytes","4 bytes","6 bytes","8 bytes","10 bytes"],a:2,e:"طابور الجلب المسبق سعته 6 بايت."},
+{id:35,s:"B",q:"The supply voltage required for 8086 operation is:",o:["+3V","+5V","+9V","+12V","+15V"],a:1,e:"جهد تشغيل 8086 القياسي هو +5V."},
+{id:36,s:"B",q:"The two major units of 8086 architecture are:",o:["ALU and CU","BIU and EU","RAM and ROM","Cache and ALU","Stack and Queue"],a:1,e:"الوحدتان الرئيسيتان هما BIU و EU."},
+{id:37,s:"B",q:"The Bus Interface Unit (BIU) is responsible for:",o:["Instruction execution","Memory addressing","Arithmetic operations","Logic operations","Interrupt handling"],a:1,e:"الـ BIU يتولى التعامل مع العناوين والذاكرة والحافلة."},
+{id:38,s:"B",q:"The Execution Unit (EU) is responsible for:",o:["Instruction fetching","Instruction execution","Memory addressing","Bus control","I/O mapping"],a:1,e:"الـ EU مسؤول عن فك وتنفيذ التعليمات."},
+{id:39,s:"B",q:"The pipelining mechanism in 8086 improves:",o:["Memory capacity","System performance","Instruction size","Voltage stability","Clock accuracy"],a:1,e:"الجلب المسبق والـ pipeline يحسنان الأداء العام."},
+{id:40,s:"B",q:"The instruction queue works as:",o:["LIFO","FIFO","Stack","Register file","Cache"],a:1,e:"طابور التعليمات يعمل كمبدأ First In First Out."},
+{id:41,s:"B",q:"The segment register used for instructions is:",o:["DS","ES","CS","SS","IP"],a:2,e:"Segment التعليمات هو Code Segment أي CS."},
+{id:42,s:"B",q:"The register that contains the offset of the next instruction is:",o:["CS","IP","SP","AX","BX"],a:1,e:"السجل IP يحوي إزاحة التعليمة التالية."},
+{id:43,s:"B",q:"Which segment register is used for stack operations?",o:["CS","DS","SS","ES","IP"],a:2,e:"عمليات المكدس تستخدم Stack Segment أي SS."},
+{id:44,s:"B",q:"The extra segment register is abbreviated as:",o:["XS","ES","SS","DS","CS"],a:1,e:"اختصار Extra Segment هو ES."},
+{id:45,s:"B",q:"The physical address in 8086 is:",o:["8 bits","12 bits","16 bits","20 bits","32 bits"],a:3,e:"العنوان الفيزيائي في 8086 عرضه 20 بت."},
+{id:46,s:"B",q:"Logical address in 8086 is written as:",o:["offset:segment","segment:offset","base:index","address:data","data:address"],a:1,e:"العنوان المنطقي يُكتب بالشكل segment:offset."},
+{id:47,s:"B",q:"The size of each memory segment in 8086 is:",o:["32 KB","64 KB","128 KB","256 KB","512 KB"],a:1,e:"كل Segment سعته 64KB."},
+{id:48,s:"B",q:"The number of segments active at a time in 8086 is:",o:["2","3","4","5","6"],a:2,e:"القطاعات الفعالة المعتادة هي 4: CS و DS و SS و ES."},
+{id:49,s:"B",q:"The formula for calculating physical address is:",o:["Segment + Offset","Segment × 10H + Offset","Segment × Offset","Offset × 10H + Segment","Segment ÷ Offset"],a:1,e:"هذه الصيغة تكافئ Segment × 16 + Offset."},
+{id:50,s:"B",q:"Which unit generates the physical address?",o:["EU","BIU","ALU","Stack unit","Flag unit"],a:1,e:"وحدة BIU تولد العنوان الفيزيائي."},
+{id:51,s:"B",q:"The register AX is mainly used as:",o:["Base register","Counter register","Accumulator","Pointer register","Index register"],a:2,e:"AX هو السجل التراكمي الأساسي Accumulator."},
+{id:52,s:"B",q:"The BX register is commonly used as:",o:["Base register","Stack register","Flag register","Instruction register","Control register"],a:0,e:"BX يُستخدم غالباً كسجل قاعدة Base register."},
+{id:53,s:"B",q:"The CX register is commonly used as:",o:["Counter register","Accumulator","Segment register","Index register","Stack register"],a:0,e:"CX هو عداد شائع للحلقات والتكرار Counter register."},
+{id:54,s:"B",q:"The DX register is used in:",o:["Multiplication and division","Loop operations","Stack operations","Interrupt control","Instruction decoding"],a:0,e:"DX يُستخدم مع AX في الضرب والقسمة وبعض عمليات I/O."},
+{id:55,s:"B",q:"SP register stands for:",o:["Source Pointer","Stack Pointer","System Pointer","Segment Pointer","Special Pointer"],a:1,e:"SP اختصار Stack Pointer."},
+{id:56,s:"B",q:"BP register is mainly used for:",o:["Stack data access","Instruction fetch","Arithmetic logic","Interrupt control","Flag manipulation"],a:0,e:"BP يُستخدم للوصول إلى بيانات المكدس."},
+{id:57,s:"B",q:"SI register stands for:",o:["Source Index","Segment Index","System Index","Stack Index","Special Index"],a:0,e:"SI اختصار Source Index."},
+{id:58,s:"B",q:"DI register stands for:",o:["Data Index","Destination Index","Direct Index","Dynamic Index","Dual Index"],a:1,e:"DI اختصار Destination Index."},
+{id:59,s:"B",q:"The flag register in 8086 contains:",o:["8 flags","9 flags","10 flags","12 flags","16 flags"],a:1,e:"المقصود الأعلام الفعالة في 8086 وعددها 9."},
+{id:60,s:"B",q:"The Zero Flag (ZF) is set when:",o:["Result is negative","Result is zero","Carry occurs","Overflow occurs","Parity changes"],a:1,e:"ZF يرتفع عندما تكون النتيجة صفراً."},
+{id:61,s:"B",q:"The Carry Flag (CF) indicates:",o:["Zero result","Borrow or carry","Sign change","Interrupt","Overflow"],a:1,e:"CF يدل على حمل أو استعارة في العمليات الحسابية."},
+{id:62,s:"B",q:"The Sign Flag (SF) represents:",o:["Carry result","Parity result","Sign of result","Stack condition","Interrupt enable"],a:2,e:"SF يعكس إشارة النتيجة."},
+{id:63,s:"B",q:"The Direction Flag (DF) controls:",o:["Interrupts","String operations direction","Arithmetic operations","Stack operations","Memory size"],a:1,e:"DF يتحكم باتجاه المعالجة في تعليمات السلاسل."},
+{id:64,s:"B",q:"Overflow Flag (OF) indicates:",o:["Division error","Arithmetic overflow","Memory error","Stack overflow","Interrupt"],a:1,e:"OF يدل على overflow في العمليات الموقعة."},
+{id:65,s:"B",q:"Register addressing mode means:",o:["Operand is in memory","Operand is in register","Operand is immediate","Operand is constant","Operand is stack"],a:1,e:"في Register addressing يكون المعامل داخل سجل."},
+{id:66,s:"B",q:"Immediate addressing mode means:",o:["Operand in memory","Operand in register","Operand is constant value","Operand in stack","Operand in segment"],a:2,e:"Immediate addressing يعني أن القيمة ثابتة داخل التعليمة."},
+{id:67,s:"B",q:"Direct addressing mode means:",o:["Address stored in register","Address given directly in instruction","Address stored in stack","Address in segment","Address in flag"],a:1,e:"Direct addressing: العنوان يُذكر مباشرة في التعليمة."},
+{id:68,s:"B",q:"Aligned word in memory occurs when:",o:["Address is odd","Address is even","Address is negative","Address is large","Address is zero"],a:1,e:"الكلمة aligned تبدأ عند عنوان زوجي."},
+{id:69,s:"B",q:"Misaligned word requires:",o:["One bus cycle","Two bus cycles","Three bus cycles","Four bus cycles","Five bus cycles"],a:1,e:"الكلمة غير المحاذية تحتاج دورتين عادةً."},
+{id:70,s:"B",q:"8086 memory banks are divided into:",o:["Two 512KB banks","Two 1MB banks","Four 256KB banks","Eight 128KB banks","Single 1MB bank"],a:0,e:"تقسم الذاكرة إلى بنكين كل منهما 512KB: منخفض وعالٍ."},
+{id:71,s:"B",q:"The lower memory bank handles:",o:["Odd addresses","Even addresses","Both addresses","Segment addresses","Stack addresses"],a:1,e:"البنك المنخفض يتعامل مع العناوين الزوجية."},
+{id:72,s:"B",q:"The high memory bank handles:",o:["Even addresses","Odd addresses","Segment addresses","Stack addresses","Interrupt addresses"],a:1,e:"البنك العالي يتعامل مع العناوين الفردية."},
+{id:73,s:"B",q:"Assembly language uses:",o:["Binary codes","Mnemonics","Machine numbers","Electrical pulses","Logic gates"],a:1,e:"لغة التجميع تستخدم رموز مختصرة Mnemonics."},
+{id:74,s:"B",q:"An assembler converts:",o:["Machine code to assembly","Assembly to machine code","Binary to decimal","Decimal to binary","Hardware to software"],a:1,e:"وظيفة الـ Assembler تحويل Assembly إلى Machine Code."},
+{id:75,s:"B",q:"The MOV instruction is used for:",o:["Arithmetic","Data transfer","Loop control","Interrupt","Branching"],a:1,e:"MOV لنقل البيانات Data transfer."},
+{id:76,s:"C",q:"The Microprocessor 8086 registers is:",o:["8 bit","16 bit","32 bit","64 bit","128 bit"],a:1,e:"سجلات 8086 العامة الأساسية بعرض 16 بت."},
+{id:77,s:"C",q:"The Microprocessor 8086 requires a power supply:",o:["+5V","+12V","+1.5V","+9V","+10V"],a:0,e:"يحتاج 8086 إلى مصدر تغذية +5V."},
+{id:78,s:"C",q:"The instruction queue in Microprocessor 8086 is a part of:",o:["EU","BIU","ALU","Registers","CU"],a:1,e:"Instruction Queue جزء من الـ BIU."},
+{id:79,s:"C",q:"The BIU contains the following register:",o:["DI","BP","IP","SI","AX"],a:2,e:"من سجلات الـ BIU: IP مع سجلات المقاطع."},
+{id:80,s:"C",q:"If DS = 7FA2H and offset = 438EH, the physical address is:",o:["83DAEH","7FA2:438E","7FA20H","8FA1FH","5AF31H"],a:0,e:"الحساب: 7FA2H × 10H = 7FA20H + 438EH = 83DAEH."},
+{id:81,s:"C",q:"If CS = 24F6H and IP = 634AH, the logical address is:",o:["634A","24F6:634A","24F60","34F5F","5634C"],a:1,e:"هذا هو تمثيل العنوان المنطقي بصيغة segment:offset."},
+{id:82,s:"C",q:"In Register addressing mode if AX = 1000H and BL = 50H, what will be the value of AX after executing ADD AX, BX?",o:["AX = 1050H","AX = 15FFH","AX = 1080H","AX = 10ACH","AX = 15AAH"],a:0,e:"عادة المقصود BX = 0050H عند إعطاء BL=50H، لذا 1000H + 0050H = 1050H."},
+{id:83,s:"C",q:"Memory size of microprocessor 8086 is:",o:["1M","2M","3M","4M","5M"],a:0,e:"سعة الذاكرة القابلة للعنونة هي 1 ميجابايت."},
+{id:84,s:"C",q:"Number of transistors in microprocessor 8086 are:",o:["4500","6500","29000","130000","2200"],a:2,e:"عدد الترانزستورات الشائع ذكره للـ 8086 يقارب 29 ألفاً."},
+{id:85,s:"C",q:"The responsible for decoding and executing all instruction:",o:["Bus interface unit (BIU)","Execution unit (EU)","Register","Pipelining","ALU"],a:1,e:"الـ EU يفك وينفذ التعليمات."},
+{id:86,s:"C",q:"Used to store information temporarily in the CPU:",o:["ROM","Cache memory","Register","Storage","RAM"],a:2,e:"السجلات تخزن المعلومات مؤقتاً داخل المعالج."},
+{id:87,s:"C",q:"Used as a loop counter:",o:["AX","BX","CX","DX","SS"],a:2,e:"CX هو العداد المفضل للحلقات."},
+{id:88,s:"C",q:"Preferred register to use in arithmetic, logic and data transfer instruction:",o:["AX","BX","CX","DX","IR"],a:0,e:"AX هو السجل المفضل كثيراً في الحساب والمنطق ونقل البيانات."},
+{id:89,s:"C",q:"Represent an independently addressable unit of memory consisting of 64K consecutive bytes:",o:["Pipeline","Logical address","Physical address","Segment","Register"],a:3,e:"الـ Segment يمثل 64KB من البايتات المتتالية."},
+{id:90,s:"C",q:"If CS = 24F6H and IP = 634AH, the upper range is:",o:["24F6:634A","634A","34F5F","24F60","76340"],a:2,e:"المدى الأعلى للقطاع = 24F60H + FFFFH = 34F5FH."},
+{id:91,s:"C",q:"MOV AL, BL is an example of:",o:["Immediate addressing mode","Register addressing mode","Indexed addressing mode","Direct addressing mode","Indirect addressing mode"],a:1,e:"في MOV AL, BL كلا المعاملين سجلات."},
+{id:92,s:"C",q:"AX = 2345H, what will be the value of AX after executing MOV AL, 07H?",o:["AX = 2345H","AX = 4523H","AX = 2307H","AX = 0723H","AX = 8462H"],a:2,e:"التعليمة تغيّر AL فقط إلى 07H وتبقي AH = 23H."},
+{id:93,s:"C",q:"MOV [1000], AX is an example of:",o:["Register addressing mode","Immediate addressing mode","Indexed addressing mode","Direct addressing mode","Indirect addressing mode"],a:3,e:"العنوان [1000] مذكور مباشرة داخل التعليمة = Direct addressing mode."},
+{id:94,s:"C",q:"Based addressing mode uses one of two base registers:",o:["SI or DI","BX or BP","DS or BP","SS or SI","DI or SS"],a:1,e:"Based addressing يستخدم أحد سجلي القاعدة BX أو BP."},
+{id:95,s:"C",q:"SI or DI are used in the operand field with:",o:["Register addressing mode","Indexed addressing mode","Direct addressing mode","Immediate addressing mode","Indirect addressing mode"],a:1,e:"السجلان SI و DI يرتبطان بنمط Indexed addressing."},
+{id:96,s:"C",q:"MOV [BP+SI], AH. If SS = 2000H, BP = 400H and SI = 800H, what will be the effective address?",o:["20000","24800","4000","4800","2460"],a:3,e:"EA = 0400H + 0800H = 0C00H. Physical = 20000H + 0C00H = 20C00H."},
+{id:97,s:"C",q:"Data bytes associated with an even address reside in:",o:["Low bank","High bank","Even address","Odd address","Balancing"],a:0,e:"البايت عند العنوان الزوجي يوجد في البنك المنخفض Low bank."},
+{id:98,s:"C",q:"Lower bank transfers bytes of data over data line:",o:["D0 through D7","D8 through D15","BHE = 0","BLE = 0","BHE = 1"],a:0,e:"البنك المنخفض ينقل البيانات عبر الخطوط D0-D7."},
+{id:99,s:"C",q:"The general purpose registers are located in:",o:["BIU","EU","CU","RAM","ALU"],a:1,e:"السجلات العامة توجد ضمن Execution Unit."},
+{id:100,s:"C",q:"Used in shift and rotate operations:",o:["AX","CX","BX","DX","IS"],a:1,e:"تعليمات shift/rotate تستخدم CL كمعداد؛ لذا الإجابة المرتبطة هي CX."}
+];
+
+let mode="practice", activeSet="all", answers={}, revealed={}, examSubmitted=false;
+
+function getFiltered(){
+  return activeSet==="all"?Q:Q.filter(q=>q.s===activeSet);
+}
+function getScore(){
+  const f=getFiltered();
+  return f.filter(q=>answers[q.id]===q.a).length;
+}
+function getAnswered(){
+  const f=getFiltered();
+  return f.filter(q=>answers[q.id]!==undefined).length;
+}
+
+function optClass(q,idx){
+  const selected=answers[q.id]===idx;
+  const show=mode==="practice"?revealed[q.id]:examSubmitted;
+  if(!show&&selected)return"opt selected";
+  if(!show)return"opt";
+  if(idx===q.a&&selected)return"opt correct";
+  if(idx===q.a)return"opt correct-hint";
+  if(selected&&idx!==q.a)return"opt wrong";
+  return"opt";
+}
+
+function handleAnswer(qId,idx){
+  if(mode==="exam"&&examSubmitted)return;
+  if(mode==="practice"&&revealed[qId])return;
+  answers[qId]=idx;
+  if(mode==="practice")revealed[qId]=true;
+  render();
+}
+
+function setMode(m){mode=m;answers={};revealed={};examSubmitted=false;render();}
+function setSet(s){activeSet=s;render();}
+function resetAll(){answers={};revealed={};examSubmitted=false;render();}
+function submitExam(){examSubmitted=true;render();window.scrollTo(0,0);}
+
+function render(){
+  const f=getFiltered();
+  const sc=getScore();
+  const ans=getAnswered();
+  let h='';
+
+  // Header
+  h+=`<div class="header">
+    <svg class="chip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="6" y="6" width="12" height="12" rx="1"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/>
+    </svg>
+    <h1>8086 MICROPROCESSOR</h1>
+    <p>MCQ Practice Exam &bull; University of Hilla</p>
+  </div>`;
+
+  // Mode bar
+  h+=`<div class="mode-bar"><div class="mode-switch">
+    <button class="${mode==="practice"?"active":""}" onclick="setMode('practice')">📝 Practice</button>
+    <button class="${mode==="exam"?"active":""}" onclick="setMode('exam')">⏱ Exam</button>
+  </div></div>`;
+
+  // Toolbar
+  h+=`<div class="toolbar">`;
+  ["all","A","B","C"].forEach(s=>{
+    const cnt=s==="all"?Q.length:Q.filter(q=>q.s===s).length;
+    const lbl=s==="all"?`All (${cnt})`:`Set ${s} (${cnt})`;
+    h+=`<button class="${activeSet===s?"active":""}" onclick="setSet('${s}')">${lbl}</button>`;
+  });
+  h+=`<button onclick="resetAll()">🔄 Reset</button></div>`;
+
+  // Stats
+  h+=`<div class="stats-bar">
+    <div class="stat"><span>📊</span><span class="num" style="color:var(--accent)">${ans}</span><span>/ ${f.length}</span></div>
+    <div class="pbar"><div class="pfill" style="width:${(ans/f.length)*100}%"></div></div>`;
+  if((mode==="practice"||examSubmitted)&&ans>0){
+    h+=`<div class="stat"><span>✅</span><span class="num" style="color:var(--green)">${sc}</span>
+    <span style="color:var(--dark)">(${Math.round((sc/Math.max(ans,1))*100)}%)</span></div>`;
+  }
+  h+=`</div>`;
+
+  // Exam result
+  if(mode==="exam"&&examSubmitted){
+    const pct=Math.round((sc/f.length)*100);
+    h+=`<div class="result-banner">
+      <div class="big-score">${sc} / ${f.length}</div>
+      <div class="pct">${pct}% — ${pct>=50?"ناجح ✨":"حاول مرة ثانية 💪"}</div>
+    </div>`;
+  }
+
+  // Questions
+  h+=`<div class="container">`;
+  f.forEach(q=>{
+    const isRevealed=mode==="practice"?revealed[q.id]:examSubmitted;
+    const isCorrect=answers[q.id]===q.a;
+    h+=`<div class="q-card"><div class="q-num">Q${q.id} <span class="q-badge">Set ${q.s}</span>`;
+    if(isRevealed){
+      if(isCorrect) h+=`<span class="q-result" style="color:var(--green)">✓ Correct</span>`;
+      else if(answers[q.id]!==undefined) h+=`<span class="q-result" style="color:var(--red)">✗ Wrong</span>`;
+      else h+=`<span class="q-result" style="color:var(--yellow)">— Skipped</span>`;
+    }
+    h+=`</div><div class="q-text">${q.q}</div><div class="opts">`;
+    q.o.forEach((opt,i)=>{
+      const cls=optClass(q,i);
+      const dis=(mode==="practice"&&revealed[q.id])||(mode==="exam"&&examSubmitted)?"disabled":"";
+      h+=`<button class="${cls} ${dis}" onclick="handleAnswer(${q.id},${i})">
+        <span class="letter">${LETTERS[i]}</span><span>${opt}</span></button>`;
+    });
+    h+=`</div>`;
+    if(isRevealed){
+      h+=`<div class="explanation"><span class="lbl">💡 التوضيح</span>${q.e}</div>`;
+    }
+    h+=`</div>`;
+  });
+  h+=`</div>`;
+
+  // Submit bar
+  if(mode==="exam"&&!examSubmitted&&ans>0){
+    h+=`<div class="submit-bar">
+      <button class="btn btn-primary" onclick="submitExam()">📩 Submit Exam (${ans}/${f.length} answered)</button>
+    </div>`;
+  }
+
+  document.getElementById("app").innerHTML=h;
+}
+
+render();
+</script>
+</body>
 </html>
