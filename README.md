@@ -28,31 +28,6 @@ npm run dev
 npm run build
 ```
 
-## 📦 النشر على GitHub Pages
-
-1. ارفع المشروع على GitHub
-2. روح إلى **Settings → Pages**
-3. اختار **Source: GitHub Actions**
-4. المشروع راح ينشر تلقائياً عند كل push على branch الـ main
-
-الموقع راح يكون متاح على:
-```
-https://YOUR_USERNAME.github.io/8086-practice-exam/
-```
-
-## 🛠️ التقنيات
-
-- React 18
-- Vite 5
-- GitHub Actions (CI/CD)
-- GitHub Pages (Hosting)
-
-## 📝 إعداد
-
-م.م بسيم عدنان ناظم التويجري  
-جامعة الحلة الأهلية - كلية التقنيات الهندسية  
-قسم هندسة تقنيات الأمن السيبراني
-
 ---
 
 ⭐ لا تنسى تسوي Star للمشروع إذا أفادك!
